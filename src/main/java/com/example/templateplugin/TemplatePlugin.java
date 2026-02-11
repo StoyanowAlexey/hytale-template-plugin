@@ -1,9 +1,11 @@
 package com.example.templateplugin;
 
+import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
 
 import javax.annotation.Nonnull;
+import java.util.Random;
 import java.util.logging.Level;
 
 /**
@@ -26,6 +28,8 @@ public class TemplatePlugin extends JavaPlugin {
         instance = this;
         getLogger().at(Level.INFO).log("[TemplatePlugin] Plugin loaded!");
     }
+
+
 
     /**
      * Get plugin instance.

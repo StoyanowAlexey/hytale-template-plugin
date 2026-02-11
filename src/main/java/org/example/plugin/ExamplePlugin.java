@@ -3,6 +3,8 @@ package org.example.plugin;
 import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
+import hytale_vorifier_events.LocalVoteEvent;
+import hytale_votiefier_command.LocalVoteCommand;
 
 import javax.annotation.Nonnull;
 
@@ -22,6 +24,17 @@ public class ExamplePlugin extends JavaPlugin {
     @Override
     protected void setup() {
         LOGGER.atInfo().log("Setting up plugin " + this.getName());
-        this.getCommandRegistry().registerCommand(new ExampleCommand(this.getName(), this.getManifest().getVersion().toString()));
+        this.getCommandRegistry().registerCommand(
+                new ExampleCommand(this.getName(), this.getManifest().getVersion().toString())
+        );
+
+        // 1. Створюємо об'єкт івенту ОДИН раз при запуску плагіна
+        // Саме в цей момент один раз прочитається файл
+        LocalVoteEvent voteEvent = new LocalVoteEvent();
+
+        // 2. Реєструємо твою команду, передаючи їй цей об'єкт
+        this.getCommandRegistry().registerCommand(new LocalVoteCommand(voteEvent));
+
     }
+
 }

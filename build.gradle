@@ -6,24 +6,8 @@ plugins {
 import org.gradle.internal.os.OperatingSystem
 
 ext {
-    if (project.hasProperty('hytale_home')) {
-        hytaleHome = project.findProperty('hytale_home')
-    }
-    else {
-        def os = OperatingSystem.current()
-        if (os.isWindows()) {
-            hytaleHome = "${System.getProperty("user.home")}/AppData/Roaming/Hytale"
-        }
-        else if (os.isMacOsX()) {
-            hytaleHome = "${System.getProperty("user.home")}/Library/Application Support/Hytale"
-        }
-        else if (os.isLinux()) {
-            hytaleHome = "${System.getProperty("user.home")}/.var/app/com.hypixel.HytaleLauncher/data/Hytale"
-            if (!file(hytaleHome).exists()) {
-                hytaleHome = "${System.getProperty("user.home")}/.local/share/Hytale"
-            }
-        }
-    }
+    hytaleHome = "E:/HYTALE"
+    patchline = "release"
 }
 
 if (!project.hasProperty('hytaleHome')) {
