@@ -10,7 +10,6 @@ import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 public class LocalVoteCommand extends CommandBase {
     private final LocalVoteEvent localVote;
 
-    // Передаємо івент сюди, а не створюємо новий
     public LocalVoteCommand(LocalVoteEvent localVote) {
         super("vote", "Vote for getting a reward");
         this.localVote = localVote;
@@ -20,7 +19,6 @@ public class LocalVoteCommand extends CommandBase {
     protected void executeSync(@NonNullDecl CommandContext commandContext) {
         Player player = (Player) commandContext.senderAs(Player.class);
 
-        // Якщо команду ввела консоль, player буде null
         if (player == null) {
             commandContext.sendMessage(Message.parse("§cЦю команду може вводити тільки гравець!"));
             return;

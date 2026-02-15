@@ -1,0 +1,20 @@
+{
+  "IconProperties": {
+    "Scale": 0.55,
+    "Rotation": [
+      22.5,
+      45,
+      22.5
+    ],
+    "Translation": [
+      0,
+      -15
+    ]
+  },
+  "Id": "example_plugin:common_loot_box",
+  "Parent": "Furniture_Tavern_Chest_Small",
+  "Icon": "Icons/ItemsGenerated/Furniture_Crude_Chest_Small.png",
+  "MaxStack": 1,
+  "Quality": "Common",
+  "SoundEventId": "SFX_Chest_Wooden_Open_Player"
+}

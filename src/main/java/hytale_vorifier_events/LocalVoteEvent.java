@@ -5,6 +5,8 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.entity.entities.Player;
+import entities.LootBoxes.CommonLootBox;
+import entities.VotedPlayer;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -14,7 +16,7 @@ import java.util.Map;
 
 public class LocalVoteEvent {
 
-    private final Map<String, Boolean> votedPlayers = new HashMap<>();
+    private final Map<String, VotedPlayer> votedPlayers = new HashMap<>();
 
     // Використовуємо .dat, щоб ядро Hytale не намагалося парсити файл самостійно
     private final File file = new File("plugins/MyVotePlugin/players_voted.dat");
@@ -50,13 +52,20 @@ public class LocalVoteEvent {
     public void onVoteCommand(Player player) {
         String playerName = player.getDisplayName();
 
-        if (votedPlayers.getOrDefault(playerName, false)) {
+        VotedPlayer votedPlayer = votedPlayers.computeIfAbsent(
+                playerName,
+                VotedPlayer::new
+        );
+
+        if (votedPlayer.isVotedToday()) {
             player.sendMessage(Message.raw("Ви вже отримали нагороду за голос!"));
             return;
         }
 
+        votedPlayer.setVoted();
         player.sendMessage(Message.raw("Дякуємо за голос! Ви отримали нагороду!"));
-        votedPlayers.put(playerName, true);
+        CommonLootBox commonLootBox = new CommonLootBox();
+        commonLootBox.givePlayerALootBox(player);
         saveVotedPlayers();
     }
 
@@ -78,7 +87,7 @@ public class LocalVoteEvent {
 
             if (content.isEmpty() || !content.startsWith("{")) return;
 
-            Map<String, Boolean> map = GSON.fromJson(content, new TypeToken<Map<String, Boolean>>(){}.getType());
+            Map<String, VotedPlayer> map = GSON.fromJson(content, new TypeToken<Map<String, VotedPlayer>>(){}.getType());
             if (map != null) votedPlayers.putAll(map);
         } catch (Exception e) {
             System.err.println("[MyVotePlugin] Помилка завантаження JSON: " + e.getMessage());

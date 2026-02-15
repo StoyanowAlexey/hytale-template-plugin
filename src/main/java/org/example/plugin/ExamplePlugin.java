@@ -28,11 +28,7 @@ public class ExamplePlugin extends JavaPlugin {
                 new ExampleCommand(this.getName(), this.getManifest().getVersion().toString())
         );
 
-        // 1. Створюємо об'єкт івенту ОДИН раз при запуску плагіна
-        // Саме в цей момент один раз прочитається файл
         LocalVoteEvent voteEvent = new LocalVoteEvent();
-
-        // 2. Реєструємо твою команду, передаючи їй цей об'єкт
         this.getCommandRegistry().registerCommand(new LocalVoteCommand(voteEvent));
 
     }
