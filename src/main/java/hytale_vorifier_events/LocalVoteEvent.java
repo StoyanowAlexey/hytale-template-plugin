@@ -5,9 +5,11 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.entity.entities.Player;
+import com.hypixel.hytale.server.core.universe.PlayerRef;
 import entities.LootBoxes.CommonLootBox;
 import entities.VotedPlayer;
 
+import java.awt.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -18,28 +20,25 @@ public class LocalVoteEvent {
 
     private final Map<String, VotedPlayer> votedPlayers = new HashMap<>();
 
-    // Використовуємо .dat, щоб ядро Hytale не намагалося парсити файл самостійно
     private final File file = new File("plugins/MyVotePlugin/players_voted.dat");
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     public LocalVoteEvent() {
-        // Викликаємо створення файлу перед завантаженням
         createFileIfNotExists();
         loadVotedPlayers();
     }
 
-    // Той самий метод для створення файлу, про який ти питав
     private void createFileIfNotExists() {
         try {
             File parent = file.getParentFile();
             if (parent != null && !parent.exists()) {
-                parent.mkdirs(); // Створюємо папку plugins/MyVotePlugin
+                parent.mkdirs();
             }
 
             if (!file.exists()) {
                 if (file.createNewFile()) {
-                    // Одразу записуємо порожню Map, щоб файл містив {}
+
                     saveVotedPlayers();
                     System.out.println("[MyVotePlugin] Файл успішно створено!");
                 }
@@ -49,8 +48,8 @@ public class LocalVoteEvent {
         }
     }
 
-    public void onVoteCommand(Player player) {
-        String playerName = player.getDisplayName();
+    public void onVoteCommand(PlayerRef player) {
+        String playerName = player.getUsername();
 
         VotedPlayer votedPlayer = votedPlayers.computeIfAbsent(
                 playerName,
@@ -58,12 +57,13 @@ public class LocalVoteEvent {
         );
 
         if (votedPlayer.isVotedToday()) {
-            player.sendMessage(Message.raw("Ви вже отримали нагороду за голос!"));
+            player.sendMessage(Message.raw("Ви вже отримали нагороду за голос!").color(Color.RED));
             return;
         }
 
         votedPlayer.setVoted();
-        player.sendMessage(Message.raw("Дякуємо за голос! Ви отримали нагороду!"));
+        player.sendMessage(Message.raw("Дякуємо за голос! Ви отримали нагороду!").color(Color.GREEN));
+        player.sendMessage(Message.raw("Command for check all your lootboxes -   /lb").color(Color.CYAN));
         CommonLootBox commonLootBox = new CommonLootBox();
         commonLootBox.givePlayerALootBox(player);
         saveVotedPlayers();
@@ -81,7 +81,6 @@ public class LocalVoteEvent {
         try {
             if (!file.exists() || file.length() < 2) return;
 
-            // Читаємо як текст і обрізаємо пробіли для захисту від JsonParseException
             byte[] bytes = Files.readAllBytes(file.toPath());
             String content = new String(bytes, StandardCharsets.UTF_8).trim();
 

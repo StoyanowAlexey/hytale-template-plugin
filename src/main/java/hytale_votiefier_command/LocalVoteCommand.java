@@ -1,11 +1,16 @@
 package hytale_votiefier_command;
 
 import com.hypixel.hytale.server.core.Message;
+import com.hypixel.hytale.server.core.NameMatching;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
 import com.hypixel.hytale.server.core.command.system.basecommands.CommandBase;
 import com.hypixel.hytale.server.core.entity.entities.Player;
+import com.hypixel.hytale.server.core.universe.PlayerRef;
+import com.hypixel.hytale.server.core.universe.Universe;
 import hytale_vorifier_events.LocalVoteEvent;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
+
+import java.awt.*;
 
 public class LocalVoteCommand extends CommandBase {
     private final LocalVoteEvent localVote;
@@ -20,10 +25,13 @@ public class LocalVoteCommand extends CommandBase {
         Player player = (Player) commandContext.senderAs(Player.class);
 
         if (player == null) {
-            commandContext.sendMessage(Message.parse("§cЦю команду може вводити тільки гравець!"));
+            commandContext.sendMessage(Message.parse("Цю команду може вводити тільки гравець!").color(Color.RED));
             return;
         }
 
-        localVote.onVoteCommand(player);
+        PlayerRef playerRef = Universe.get().getPlayerByUsername(player.getDisplayName(), NameMatching.EXACT);
+
+        assert playerRef != null;
+        localVote.onVoteCommand(playerRef);
     }
 }
